@@ -2,12 +2,14 @@ const TodosApp = {
   data() {
     return {
       newTodo: "Vue.js 배우기!",
+      enteredTodoText: "",
     };
   },
   methods: {
     saveTodo(event) {
       event.preventDefault();
-      this.newTodo = "업데이트 To do";
+      this.newTodo = this.enteredTodoText;
+      this.enteredTodoText = "";
     },
   },
 };

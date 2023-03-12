@@ -25,6 +25,28 @@ const TodosApp = {
 
         this.todos[todoIndex] = updatedTodoItem;
         this.editedTodoId = null;
+
+        let response;
+
+        try {
+          response = await fetch("http://localhost:3000/todos/" + todoId, {
+            method: "PATCH",
+            body: JSON.stringify({
+              newText: this.enteredTodoText,
+            }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+        } catch (error) {
+          alert("문제가 발생했습니다!");
+          return;
+        }
+
+        if (!response.ok) {
+          alert("문제가 발생했습니다!");
+          return;
+        }
       } else {
         // 생성
         let response;
@@ -67,10 +89,26 @@ const TodosApp = {
       });
       this.enteredTodoText = todo.text;
     },
-    deleteTodo(todoId) {
+    async deleteTodo(todoId) {
       this.todos = this.todos.filter(function (todoItem) {
         return todoItem.id !== todoId;
       });
+
+      let response;
+
+      try {
+        response = await fetch("http://localhost:3000/todos/" + todoId, {
+          method: "DELETE",
+        });
+      } catch (error) {
+        alert("문제가 발생했습니다!");
+        return;
+      }
+
+      if (!response.ok) {
+        alert("문제가 발생했습니다!");
+        return;
+      }
     },
   },
   async created() {

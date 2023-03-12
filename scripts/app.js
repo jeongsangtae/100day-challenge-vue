@@ -1,6 +1,7 @@
 const TodosApp = {
   data() {
     return {
+      isLoading: false,
       todos: [],
       enteredTodoText: "",
       editedTodoId: null,
@@ -44,7 +45,7 @@ const TodosApp = {
         }
 
         if (!response.ok) {
-          alert("문제가 발생했습니다.");
+          alert("문제가 발생했습니다!");
           return;
         }
 
@@ -71,6 +72,27 @@ const TodosApp = {
         return todoItem.id !== todoId;
       });
     },
+  },
+  async created() {
+    let response;
+    this.isLoading = true;
+    try {
+      response = await fetch("http://localhost:3000/todos");
+    } catch (error) {
+      alert("문제가 발생했습니다!");
+      this.isLoading = false;
+      return;
+    }
+
+    this.isLoading = false;
+
+    if (!response.ok) {
+      alert("문제가 발생했습니다!");
+      return;
+    }
+
+    const responseData = await response.json();
+    this.todos = responseData.todos;
   },
 };
 

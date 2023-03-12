@@ -7,7 +7,7 @@ const TodosApp = {
     };
   },
   methods: {
-    saveTodo(event) {
+    async saveTodo(event) {
       event.preventDefault();
 
       if (this.editedTodoId) {
@@ -25,12 +25,36 @@ const TodosApp = {
         this.todos[todoIndex] = updatedTodoItem;
         this.editedTodoId = null;
       } else {
+        // 생성
+        let response;
+
+        try {
+          response = await fetch("http://localhost:3000/todos", {
+            method: "POST",
+            body: JSON.stringify({
+              text: this.enteredTodoText,
+            }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+        } catch (error) {
+          alert("문제가 발생했습니다!");
+          return;
+        }
+
+        if (!response.ok) {
+          alert("문제가 발생했습니다.");
+          return;
+        }
+
+        const responseData = await response.json();
         const newTodo = {
           text: this.enteredTodoText,
-          id: new Date().toISOString(),
+          id: responseData.createdTodo.id,
         };
+
         this.todos.push(newTodo);
-        // 생성
       }
 
       this.enteredTodoText = "";
